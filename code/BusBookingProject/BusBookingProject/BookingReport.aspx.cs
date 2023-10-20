@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+
 using System.Web.UI.WebControls;
 
 namespace BusBookingProject
@@ -21,9 +22,9 @@ namespace BusBookingProject
         #endregion
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(!IsPostBack)
+            if (!IsPostBack)
             {
-                if(Session["UserID"]!=null)
+                if (Session["UserID"] != null)
                 {
                     bindPnrDetails();
                     //Request.QueryString["Message"] = "";
@@ -56,7 +57,7 @@ namespace BusBookingProject
                 connString.Open();
             }
             sqlCmd.CommandType = CommandType.StoredProcedure;
-            sqlCmd.Parameters.AddWithValue("@UserID",Convert.ToInt32(Session["UserID"]));
+            sqlCmd.Parameters.AddWithValue("@UserID", Convert.ToInt32(Session["UserID"]));
             sqlCmd.CommandText = "ispGetPNRDetails";
             sqlCmd.Connection = connString;
             SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
@@ -102,33 +103,38 @@ namespace BusBookingProject
             //lblDepartureTime.Text = Convert.ToString(dsGetData.Tables[1].Rows[0]["DeptTime"]);
             lblTotalAmount.Text = Convert.ToString(dsGetData.Tables[1].Rows[0]["Amount"]);
             lblTotalTickets.Text = Convert.ToString(dsGetData.Tables[1].Rows[0]["TotalTickets"]);
-                        using (StringWriter sw = new StringWriter())
-                        {
-                            using (HtmlTextWriter hw = new HtmlTextWriter(sw))
-                            {
-                                StringBuilder sb = new StringBuilder();
-                                //generate header
-                                //export html string as a pdf
-                                ticket.RenderControl(hw);
-                                //tbtPNR.RenderControl(hw);
-                                // gdPaxDetails.RenderControl(hw);
-                                StringReader sr = new StringReader(sw.ToString());
-                                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0);
-                                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
-                                pdfDoc.Open();
-                                pdfDoc.NewPage();
-                                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
-                                pdfDoc.Close();
-                                Response.ContentType = "application/pdf";
-                                Response.AddHeader("content-disposition", "attachement;filename=Ticket" + ".pdf");
-                                Response.Cache.SetCacheability(HttpCacheability.NoCache);
-                                Response.Write(pdfDoc);
-                                Response.End();
-                            }
-                        }
+            using (StringWriter sw = new StringWriter())
+            {
+                using (HtmlTextWriter hw = new HtmlTextWriter(sw))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    //generate header
+                    //export html string as a pdf
+                    ticket.RenderControl(hw);
+                    //tbtPNR.RenderControl(hw);
+                    // gdPaxDetails.RenderControl(hw);
+                    StringReader sr = new StringReader(sw.ToString());
+                    Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0);
+                    PdfWriter writer = PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
+                    pdfDoc.Open();
+                    pdfDoc.NewPage();
+                    XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                    pdfDoc.Close();
+                    Response.ContentType = "application/pdf";
+                    Response.AddHeader("content-disposition", "attachement;filename=Ticket" + ".pdf");
+                    Response.Cache.SetCacheability(HttpCacheability.NoCache);
+                    Response.Write(pdfDoc);
+                    Response.End();
+                }
+            }
 
-                    }
-        
+        }
+        protected void gdTicketReport_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Your event handling code here.
+        }
+
+
 
         protected void gdTicketReport_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -140,9 +146,61 @@ namespace BusBookingProject
             }
         }
 
-        protected void gdTicketReport_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            string PnrNumber = TextBox1.Text;
+            bool PnrNumberIsFound = SearchForPnr(PnrNumber);
+
+            if (PnrNumberIsFound)
+            {
+                // Delete the PNR using the PNR number
+                DeletePnr(PnrNumber);
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('You have successsfully cancelled your ticket,Your Amount will be Refunded in 5 Working Days')", true);
+                bindPnrDetails();
+            }
+            else
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Bus not found)", true);
+
+            }
+        }
+
+        private bool SearchForPnr(string PnrNumber)
+        {
+            // No need to create a new SqlConnection here, use the existing connString.
+            if (connString.State == ConnectionState.Closed)
+            {
+                connString.Open();
+            }
+            string query = "SELECT * FROM [dbo].[PNRDetails] WHERE [PNRNo] = @PnrNumber";
+
+            using (SqlCommand command = new SqlCommand(query, connString))
+            {
+                command.Parameters.AddWithValue("@PnrNumber", PnrNumber);
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    return reader.Read(); // Return true if the PNR is found
+                }
+            }
+        }
+
+
+        private void DeletePnr(string PnrNumber)
+        {
+            if (connString.State == ConnectionState.Closed)
+            {
+                connString.Open();
+            }
+            string query = "DELETE FROM [dbo].[PNRDetails] WHERE [PNRNo] = @PnrNumber";
+
+            using (SqlCommand command = new SqlCommand(query, connString))
+            {
+                command.Parameters.AddWithValue("@PnrNumber", PnrNumber);
+                command.ExecuteNonQuery();
+            }
         }
 
     }

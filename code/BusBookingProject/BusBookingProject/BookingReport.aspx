@@ -15,26 +15,27 @@
         <asp:BoundField HeaderText="Booking Amount" DataField="TotalAmount" />
         <asp:TemplateField HeaderText="Action">
             <ItemTemplate>
+              
                 <asp:LinkButton ID="lnkbtndownloadTicket" runat="server" CommandName="DownloadTicket" CommandArgument='<%# Container.DataItemIndex %>'>Download Ticket</asp:LinkButton>
                 <asp:HiddenField ID="hdnPNRNo" runat="server" Value='<%# Eval("PNRNo") %>' />
             </ItemTemplate>
            </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Edit">
-                    <ItemTemplate>
-                   <asp:LinkButton ID="lnkbtnEdit" runat="server" CommandName="Edit" Text="Edit" />
-                   </ItemTemplate>
-                  <EditItemTemplate>
-                 <asp:LinkButton ID="lnkbtnUpdate" runat="server" CommandName="Update" Text="Update" />
-                      <asp:LinkButton ID="lnkbtnCancel" runat="server" CommandName="Cancel" Text="Cancel" />
-                 </EditItemTemplate>
-              </asp:TemplateField>
-                <asp:CommandField ShowDeleteButton="True" DeleteText="Delete" />
+
              </Columns>
              </asp:GridView>
 
+          <h4>You Can Cancel Your Ticket With Your Pnr Number</h4>
+                   <asp:Label ID="lbltext" runat="server" Text="">Enter Your PNR Number </asp:Label>
+                  <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
+                    <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="CancelTicket" />
+
 
               <div id="ticket" runat="server" visible="false">
-                <h1 style="font-weight: bold">Online Bus Booking</h1>
+            
+        
+                    <br />
+                          <br />
+                     <h1 style="font-weight: bold">   Online Bus Booking</h1>
                 <br />
                 <br />
 

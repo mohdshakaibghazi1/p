@@ -135,7 +135,9 @@
     <Content Include="Login.aspx" />
     <Content Include="PassengerDetailsInfo.aspx" />
     <Content Include="SeatDetails.aspx" />
+    <Content Include="Update.aspx" />
     <Content Include="UserRegistration.aspx" />
+    <Content Include="UserRegistrationDetail.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -275,6 +277,13 @@
     <Compile Include="SeatDetails.aspx.designer.cs">
       <DependentUpon>SeatDetails.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Update.aspx.cs">
+      <DependentUpon>Update.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Update.aspx.designer.cs">
+      <DependentUpon>Update.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UserRegistration.aspx.cs">
       <DependentUpon>UserRegistration.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -289,10 +298,18 @@
     <Compile Include="BusesList.aspx.designer.cs">
       <DependentUpon>BusesList.aspx</DependentUpon>
     </Compile>
+    <Compile Include="UserRegistrationDetail.aspx.cs">
+      <DependentUpon>UserRegistrationDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserRegistrationDetail.aspx.designer.cs">
+      <DependentUpon>UserRegistrationDetail.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\images\" />
     <Folder Include="images\" />
+    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
